@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraForge | 下一代 AI 驱动的应用工作站</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-base: #030014;
+            --bg-surface: rgba(20, 17, 40, 0.6);
+            --primary: #00f0ff;
+            --secondary: #7000ff;
+            --accent: #ff0055;
+            --text-main: #f8f9fa;
+            --text-muted: #a09eb5;
+            --border-glass: rgba(255, 255, 255, 0.08);
+            --font-display: 'Space Grotesk', 'Noto Sans SC', sans-serif;
+            --font-body: 'Noto Sans SC', sans-serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: var(--font-body);
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4, .logo-text {
+            font-family: var(--font-display);
+            font-weight: 700;
+        }
+
+        a { text-decoration: none; color: inherit; }
+
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Ambient Backgrounds */
+        .ambient-light {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(100px);
+            z-index: -1;
+            animation: pulse 8s infinite alternate;
+        }
+        .light-1 { top: -10%; left: -10%; width: 500px; height: 500px; background: rgba(112, 0, 255, 0.2); }
+        .light-2 { bottom: -10%; right: -10%; width: 600px; height: 600px; background: rgba(0, 240, 255, 0.15); animation-delay: -4s; }
+
+        @keyframes pulse {
+            0% { transform: scale(1) translate(0, 0); opacity: 0.5; }
+            100% { transform: scale(1.2) translate(50px, 50px); opacity: 0.8; }
+        }
+
+        /* Header & Nav */
+        header {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            background: rgba(3, 0, 20, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-glass);
+            z-index: 1000;
+            padding: 16px 0;
+            transition: all 0.3s ease;
+        }
+
+        nav { display: flex; justify-content: space-between; align-items: center; }
+
+        .logo { display: flex; align-items: center; gap: 10px; cursor: pointer; }
+        .logo-icon { 
+            font-size: 24px; 
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .logo-text { font-size: 22px; letter-spacing: 1px; }
+
+        .nav-links { display: flex; gap: 32px; list-style: none; }
+        .nav-links a {
+            color: var(--text-muted);
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.3s;
+            position: relative;
+        }
+        .nav-links a:hover { color: var(--text-main); }
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -6px; left: 0;
+            width: 0; height: 2px;
+            background: var(--primary);
+            transition: width 0.3s ease;
+        }
+        .nav-links a:hover::after { width: 100%; }
+
+        .btn {
+            padding: 10px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            font-family: var(--font-display);
+        }
+        .btn-outline {
+            background: transparent;
+            color: var(--text-main);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .btn-outline:hover { background: rgba(255,255,255,0.1); border-color: white; }
+        
+        .btn-glow {
+            background: linear-gradient(135deg, var(--secondary), var(--accent));
+            color: white;
+            border: none;
+            box-shadow: 0 0 20px rgba(112, 0, 255, 0.4);
+        }
+        .btn-glow:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 30px rgba(255, 0, 85, 0.6);
+        }
+
+        .header-actions { display: flex; gap: 16px; align-items: center; }
+        .mobile-btn { display: none; background: none; border: none; color: white; font-size: 24px; }
+
+        /* Hero Section */
+        .hero {
+            padding: 180px 0 100px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+        }
+        .hero-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+        .hero-text h1 {
+            font-size: 56px;
+            line-height: 1.1;
+            margin-bottom: 24px;
+        }
+        .text-gradient {
+            background: linear-gradient(to right, var(--primary), #fff, var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-size: 200% auto;
+            animation: gradient-shift 5s linear infinite;
+        }
+        @keyframes gradient-shift { 0% { background-position: 0% center; } 100% { background-position: 200% center; } }
+        
+        .hero-text p { font-size: 18px; color: var(--text-muted); margin-bottom: 40px; max-width: 500px; }
+        
+        /* Floating Code Editor Art */
+        .hero-visual { position: relative; perspective: 1000px; }
+        .code-card {
+            background: rgba(10, 10, 18, 0.8);
+            border: 1px solid var(--border-glass);
+            border-radius: 16px;
+            padding: 20px;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5), inset 0 0 0 1px rgba(255,255,255,0.05);
+            transform: rotateY(-10deg) rotateX(5deg);
+            animation: float-card 6s ease-in-out infinite;
+        }
+        @keyframes float-card {
+            0%, 100% { transform: rotateY(-10deg) rotateX(5deg) translateY(0); }
+            50% { transform: rotateY(-5deg) rotateX(8deg) translateY(-20px); }
+        }
+        .mac-buttons { display: flex; gap: 8px; margin-bottom: 20px; }
+        .mac-btn { width: 12px; height: 12px; border-radius: 50%; }
+        .mac-red { background: #ff5f56; } .mac-yellow { background: #ffbd2e; } .mac-green { background: #27c93f; }
+        .code-line {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 14px;
+            color: #888;
+            margin-bottom: 10px;
+            display: flex;
+            gap: 15px;
+        }
+        .syntax-pink { color: #ff79c6; }
+        .syntax-blue { color: #8be9fd; }
+        .syntax-green { color: #50fa7b; }
+        .syntax-yellow { color: #f1fa8c; }
+
+        /* Features Section */
+        .section-header { text-align: center; margin-bottom: 64px; }
+        .section-tag {
+            display: inline-block;
+            padding: 6px 16px;
+            background: rgba(0, 240, 255, 0.1);
+            color: var(--primary);
+            border-radius: 100px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            border: 1px solid rgba(0, 240, 255, 0.2);
+        }
+        .section-header h2 { font-size: 40px; margin-bottom: 16px; }
+
+        .features { padding: 100px 0; }
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        .feature-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-glass);
+            border-radius: 20px;
+            padding: 40px 30px;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 2px;
+            background: linear-gradient(90deg, transparent, var(--primary), transparent);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+        .feature-card:hover {
+            transform: translateY(-10px);
+            background: rgba(30, 25, 60, 0.7);
+            border-color: rgba(255,255,255,0.15);
+        }
+        .feature-card:hover::before { opacity: 1; }
+        
+        .f-icon {
+            width: 60px; height: 60px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            display: flex; justify-content: center; align-items: center;
+            font-size: 24px;
+            color: var(--primary);
+            margin-bottom: 24px;
+            border: 1px solid var(--border-glass);
+        }
+        .feature-card h3 { font-size: 22px; margin-bottom: 12px; }
+        .feature-card p { color: var(--text-muted); font-size: 15px; }
+
+        /* Stats */
+        .stats-wrap {
+            display: flex;
+            justify-content: space-between;
+            background: linear-gradient(90deg, rgba(112,0,255,0.1), rgba(0,240,255,0.1));
+            border: 1px solid var(--border-glass);
+            border-radius: 24px;
+            padding: 60px;
+            margin: 100px 0;
+        }
+        .stat-item { text-align: center; }
+        .stat-num { font-size: 48px; font-weight: 700; color: white; margin-bottom: 8px; font-family: var(--font-display);}
+        .stat-label { color: var(--primary); font-weight: 500; letter-spacing: 1px; }
+
+        /* Pricing */
+        .pricing { padding: 80px 0 120px; }
+        .pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; }
+        .price-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-glass);
+            border-radius: 24px;
+            padding: 40px;
+            display: flex; flex-direction: column;
+            transition: 0.3s;
+        }
+        .price-card.pro {
+            background: linear-gradient(180deg, rgba(20,17,40,0.8) 0%, rgba(112,0,255,0.15) 100%);
+            border-color: rgba(112, 0, 255, 0.4);
+            transform: scale(1.05);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4), 0 0 20px rgba(112,0,255,0.2);
+        }
+        .badge {
+            background: linear-gradient(90deg, var(--secondary), var(--accent));
+            color: white; padding: 4px 12px; border-radius: 12px; font-size: 12px;
+            align-self: flex-start; margin-bottom: 16px; font-weight: bold;
+        }
+        .price-name { font-size: 24px; color: var(--text-muted); margin-bottom: 16px; }
+        .price-val { font-size: 48px; font-weight: 700; margin-bottom: 30px; font-family: var(--font-display); }
+        .price-val span { font-size: 16px; color: var(--text-muted); font-weight: 400; }
+        
+        .price-list { list-style: none; margin-bottom: 40px; flex-grow: 1; }
+        .price-list li { margin-bottom: 16px; display: flex; align-items: center; gap: 12px; color: #ddd; }
+        .price-list li i { color: var(--primary); font-size: 14px; }
+        .price-card .btn { width: 100%; padding: 14px; }
+
+        /* Footer */
+        footer { border-top: 1px solid var(--border-glass); padding: 60px 0 30px; background: rgba(0,0,0,0.4); }
+        .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; margin-bottom: 60px; }
+        .footer-desc { color: var(--text-muted); margin-top: 20px; font-size: 14px; max-width: 300px; }
+        .footer-col h4 { font-size: 16px; margin-bottom: 24px; color: white; }
+        .footer-col ul { list-style: none; }
+        .footer-col ul li { margin-bottom: 12px; }
+        .footer-col ul a { color: var(--text-muted); font-size: 14px; transition: 0.3s; }
+        .footer-col ul a:hover { color: var(--primary); }
+        .copyright { text-align: center; color: rgba(255,255,255,0.3); font-size: 14px; padding-top: 30px; border-top: 1px solid var(--border-glass); }
+
+        /* Animation Classes */
+        .reveal { opacity: 0; transform: translateY(30px); transition: all 0.8s ease-out; }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .hero-grid { grid-template-columns: 1fr; text-align: center; gap: 40px;}
+            .hero-text p { margin: 0 auto 40px; }
+            .hero-visual { margin: 0 auto; max-width: 500px; }
+            .pricing-grid { grid-template-columns: 1fr; gap: 40px; }
+            .price-card.pro { transform: scale(1); }
+            .stats-wrap { flex-direction: column; gap: 40px; }
+        }
+        @media (max-width: 768px) {
+            .nav-links, .header-actions .btn-outline { display: none; }
+            .mobile-btn { display: block; }
+            .hero-text h1 { font-size: 40px; }
+            .footer-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Ambient Background Lighting -->
+    <div class="ambient-light light-1"></div>
+    <div class="ambient-light light-2"></div>
+
+    <!-- Header -->
+    <header id="header">
+        <div class="container">
+            <nav>
+                <div class="logo">
+                    <i class="fa-solid fa-code-merge logo-icon"></i>
+                    <span class="logo-text">AuraForge</span>
+                </div>
+                <ul class="nav-links">
+                    <li><a href="#features">核心引擎</a></li>
+                    <li><a href="#showcase">数据生态</a></li>
+                    <li><a href="#pricing">节点授权</a></li>
+                    <li><a href="#">开发者文档</a></li>
+                </ul>
+                <div class="header-actions">
+                    <button class="btn btn-outline">控制台登录</button>
+                    <button class="btn btn-glow">免费构建</button>
+                    <button class="mobile-btn"><i class="fa-solid fa-bars"></i></button>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-grid">
+                <div class="hero-text reveal">
+                    <h1>用自然语言<br><span class="text-gradient" id="typewriter">生成全栈应用</span></h1>
+                    <p>告别繁杂的脚手架与语法纠错。通过 AuraForge 的神经网络，仅需描述您的业务逻辑，即可在毫秒间完成从数据库架构到前端 UI 的全流程部署。</p>
+                    <div style="display: flex; gap: 16px; flex-wrap: wrap;">
+                        <button class="btn btn-glow" style="padding: 16px 32px; font-size: 16px;">
+                            <i class="fa-solid fa-bolt" style="margin-right: 8px;"></i> 启动神经网络
+                        </button>
+                        <button class="btn btn-outline" style="padding: 16px 32px; font-size: 16px;">
+                            <i class="fa-brands fa-github" style="margin-right: 8px;"></i> 链接仓库
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="hero-visual reveal" style="transition-delay: 0.2s;">
+                    <div class="code-card">
+                        <div class="mac-buttons">
+                            <div class="mac-btn mac-red"></div>
+                            <div class="mac-btn mac-yellow"></div>
+                            <div class="mac-btn mac-green"></div>
+                        </div>
+                        <div class="code-line">
+                            <span style="color: #6272a4;">// AuraForge AI Prompt</span>
+                        </div>
+                        <div class="code-line">
+                            <span class="syntax-pink">const</span> <span class="syntax-blue">app</span> = <span class="syntax-pink">await</span> <span class="syntax-green">Aura.generate</span>({
+                        </div>
+                        <div class="code-line">
+                            &nbsp;&nbsp;type: <span class="syntax-yellow">'SaaS Dashboard'</span>,
+                        </div>
+                        <div class="code-line">
+                            &nbsp;&nbsp;database: <span class="syntax-yellow">'PostgreSQL'</span>,
+                        </div>
+                        <div class="code-line">
+                            &nbsp;&nbsp;auth: <span class="syntax-pink">true</span>,
+                        </div>
+                        <div class="code-line">
+                            &nbsp;&nbsp;theme: <span class="syntax-yellow">'Cyberpunk Dark'</span>
+                        </div>
+                        <div class="code-line">
+                            });
+                        </div>
+                        <div class="code-line"><br></div>
+                        <div class="code-line">
+                            <span style="color: #50fa7b;">> 编译完成 (124ms)</span>
+                        </div>
+                        <div class="code-line">
+                            <span style="color: #8be9fd;">> API 路由已就绪...</span>
+                        </div>
+                        <div class="code-line">
+                            <span style="color: #ff79c6;">> 部署至边缘节点 [OK]</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats -->
+    <div class="container reveal">
+        <div class="stats-wrap">
+            <div class="stat-item">
+                <div class="stat-num">98%</div>
+                <div class="stat-label">缩短开发周期</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-num">2.4M+</div>
+                <div class="stat-label">已生成组件数</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-num">12ms</div>
+                <div class="stat-label">边缘渲染延迟</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-num">SOC 2</div>
+                <div class="stat-label">企业级数据合规</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Features -->
+    <section class="features" id="features">
+        <div class="container">
+            <div class="section-header reveal">
+                <div class="section-tag">架构优势</div>
+                <h2>超越传统的视觉开发范式</h2>
+                <p style="color: var(--text-muted); max-width: 600px; margin: 0 auto;">我们将先进的LLM大语言模型与可视化的拖拽节点深度融合，提供无与伦比的创造体验。</p>
+            </div>
+            
+            <div class="feature-grid">
+                <div class="feature-card reveal">
+                    <div class="f-icon"><i class="fa-solid fa-brain"></i></div>
+                    <h3>语义化建模</h3>
+                    <p>只需用人类语言描述数据关系，AuraForge 的神经网络将自动为您建立具有完整外键、索引优化的生产级数据库结构。</p>
+                </div>
+                <div class="feature-card reveal" style="transition-delay: 0.1s;">
+                    <div class="f-icon"><i class="fa-solid fa-layer-group"></i></div>
+                    <h3>原子级 UI 引擎</h3>
+                    <p>内置超过 5000+ 高自由度的玻璃拟物化与极简风格原子组件。随意拼接，并由 AI 自动保证设计规范的一致性。</p>
+                </div>
+                <div class="feature-card reveal" style="transition-delay: 0.2s;">
+                    <div class="f-icon"><i class="fa-solid fa-network-wired"></i></div>
+                    <h3>Serverless 边缘部署</h3>
+                    <p>告别运维。一键发布，您的应用逻辑将瞬间分发至全球 200+ 边缘节点，实现毫秒级响应和近乎无限的弹性缩放。</p>
+                </div>
+                <div class="feature-card reveal" style="transition-delay: 0.3s;">
+                    <div class="f-icon"><i class="fa-solid fa-shield-halved"></i></div>
+                    <h3>零信任安全沙箱</h3>
+                    <p>所有生成的 API 端点均默认集成 JWT 鉴权、DDoS 防护及速率限制。自动扫描依赖漏洞，确保应用固若金汤。</p>
+                </div>
+                <div class="feature-card reveal" style="transition-delay: 0.4s;">
+                    <div class="f-icon"><i class="fa-solid fa-code-branch"></i></div>
+                    <h3>无缝代码导出</h3>
+                    <p>拒绝平台绑定。一键将项目导出为标准 React / Next.js 和 Node.js 源码，完全保留您的数字资产所有权。</p>
+                </div>
+                <div class="feature-card reveal" style="transition-delay: 0.5s;">
+                    <div class="f-icon"><i class="fa-solid fa-plug"></i></div>
+                    <h3>万物互联 Webhooks</h3>
+                    <p>通过内置的自动化流水线引擎，轻松对接 Stripe, Slack, Twilio 等 300+ 第三方生态 API，构建高度自动化工作流。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section class="pricing" id="pricing">
+        <div class="container">
+            <div class="section-header reveal">
+                <div class="section-tag">算力授权</div>
+                <h2>按需分配，透明订阅</h2>
+            </div>
+            
+            <div class="pricing-grid">
+                <!-- Basic -->
+                <div class="price-card reveal">
+                    <div class="price-name">创客版 (Maker)</div>
+                    <div class="price-val">¥0<span> /月</span></div>
+                    <ul class="price-list">
+                        <li><i class="fa-solid fa-check"></i> 2 个激活应用</li>
+                        <li><i class="fa-solid fa-check"></i> 每月 10,000 次 API 调用</li>
+                        <li><i class="fa-solid fa-check"></i> 社区版 AI 辅助模型</li>
+                        <li><i class="fa-solid fa-check"></i> 基础共享数据库资源</li>
+                    </ul>
+                    <button class="btn btn-outline">免费开启</button>
+                </div>
+                
+                <!-- Pro -->
+                <div class="price-card pro reveal" style="transition-delay: 0.1s;">
+                    <div class="badge">最受欢迎</div>
+                    <div class="price-name" style="color: white;">光速版 (Velocity)</div>
+                    <div class="price-val text-gradient">¥299<span> /月</span></div>
+                    <ul class="price-list">
+                        <li><i class="fa-solid fa-check"></i> 无限制应用创建</li>
+                        <li><i class="fa-solid fa-check"></i> 每月 2,000,000 次 API 调用</li>
+                        <li><i class="fa-solid fa-check"></i> 专属 GPT-4o 深度架构师</li>
+                        <li><i class="fa-solid fa-check"></i> 专属独立数据库集群</li>
+                        <li><i class="fa-solid fa-check"></i> 移除系统水印及自定义域名</li>
+                    </ul>
+                    <button class="btn btn-glow">开始 14 天试用</button>
+                </div>
+                
+                <!-- Enterprise -->
+                <div class="price-card reveal" style="transition-delay: 0.2s;">
+                    <div class="price-name">无限版 (Nexus)</div>
+                    <div class="price-val">定制<span> /年</span></div>
+                    <ul class="price-list">
+                        <li><i class="fa-solid fa-check"></i> 专享独立物理服务器节点</li>
+                        <li><i class="fa-solid fa-check"></i> 私有化 LLM 权重微调</li>
+                        <li><i class="fa-solid fa-check"></i> 99.999% SLA 服务承诺</li>
+                        <li><i class="fa-solid fa-check"></i> 源码级别的本地化审查部署</li>
+                        <li><i class="fa-solid fa-check"></i> 7x24 架构师 1v1 支持</li>
+                    </ul>
+                    <button class="btn btn-outline">联系企业销售</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <div class="logo">
+                        <i class="fa-solid fa-code-merge logo-icon"></i>
+                        <span class="logo-text" style="color: white;">AuraForge</span>
+                    </div>
+                    <p class="footer-desc">在灵境，我们将代码抽象为纯粹的思想。构建未来的速度，仅受限于您的想象力。</p>
+                </div>
+                <div class="footer-col">
+                    <h4>核心技术</h4>
+                    <ul>
+                        <li><a href="#">Neural UI 渲染器</a></li>
+                        <li><a href="#">语义化数据 ORM</a></li>
+                        <li><a href="#">边缘运行时 (Edge Runtime)</a></li>
+                        <li><a href="#">安全合规中心</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>开发者生态</h4>
+                    <ul>
+                        <li><a href="#">API 参考文档</a></li>
+                        <li><a href="#">CLI 工具链</a></li>
+                        <li><a href="#">开源组件库</a></li>
+                        <li><a href="#">Discord 社区</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>关于企业</h4>
+                    <ul>
+                        <li><a href="#">加入团队</a></li>
+                        <li><a href="#">隐私政策 (Privacy)</a></li>
+                        <li><a href="#">服务条款 (TOS)</a></li>
+                        <li><a href="#">联系安全团队</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                &copy; 2026 AuraForge Technologies. 采用星际联邦许可网络构建。
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Scroll Reveal Animation
+        function reveal() {
+            var reveals = document.querySelectorAll(".reveal");
+            for (var i = 0; i < reveals.length; i++) {
+                var windowHeight = window.innerHeight;
+                var elementTop = reveals[i].getBoundingClientRect().top;
+                var elementVisible = 100;
+                if (elementTop < windowHeight - elementVisible) {
+                    reveals[i].classList.add("active");
+                }
+            }
+        }
+        window.addEventListener("scroll", reveal);
+        reveal(); // Trigger on load
+
+        // Header Background on Scroll
+        window.addEventListener("scroll", function() {
+            var header = document.getElementById("header");
+            if (window.scrollY > 50) {
+                header.style.background = "rgba(3, 0, 20, 0.85)";
+                header.style.boxShadow = "0 4px 30px rgba(0, 0, 0, 0.5)";
+            } else {
+                header.style.background = "rgba(3, 0, 20, 0.4)";
+                header.style.boxShadow = "none";
+            }
+        });
+
+        // Simple typing effect for hero (Optional enhancement)
+        const texts = ["生成全栈应用", "构建管理后台", "部署 AI 代理", "连接云端数据"];
+        let count = 0;
+        let index = 0;
+        let currentText = "";
+        let letter = "";
+        const typewriterElement = document.getElementById('typewriter');
+
+        (function type(){
+            if(count === texts.length) count = 0;
+            currentText = texts[count];
+            letter = currentText.slice(0, ++index);
+            
+            typewriterElement.textContent = letter;
+            if(letter.length === currentText.length){
+                setTimeout(() => { index = 0; count++; type(); }, 2000);
+            } else {
+                setTimeout(type, 150);
+            }
+        }());
+    </script>
+</body>
+</html>

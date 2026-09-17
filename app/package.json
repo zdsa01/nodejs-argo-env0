@@ -1,0 +1,19 @@
+{
+  "name": "nodejs-argo",
+  "version": "1.0.0",
+  "description": "Node.js Argo tunnel proxy tool for PaaS platforms",
+  "main": "index.js",
+  "author": "",
+  "license": "MIT",
+  "private": false,
+  "scripts": {
+    "dev": "node index.js",
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "axios": "^1.7.9"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
